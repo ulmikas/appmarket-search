@@ -37,6 +37,10 @@ var config = {
 				],
 			},
 			{
+				test: /\.json$/,
+				loader: 'json'
+			},
+			{
 				test: /\.css$/,
 				loader: extractCSS.extract(['css']) 
 			},
