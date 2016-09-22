@@ -37,7 +37,7 @@ var config = {
 				],
 			},
 			{
-				test: /\.json$/,
+				test: /\.json/,
 				loader: 'json'
 			},
 			{
@@ -60,7 +60,7 @@ var config = {
 		}
 	},
 	devServer: {
-		port: 4950,
+		port: 4949,
 		watchOptions: {
 			aggregateTimeout: 100,
 			poll: 1000,
@@ -73,7 +73,7 @@ var config = {
     new webpack.optimize.OccurrenceOrderPlugin(),
     new webpack.HotModuleReplacementPlugin(),
     new HtmlWebpackPlugin({
-	    template: './src/index.html'
+      template: './src/index.html'
     }),
     extractCSS
   ],

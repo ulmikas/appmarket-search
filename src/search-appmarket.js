@@ -1,19 +1,21 @@
 import React from 'react';
 import {render} from 'react-dom';
 import apps from './data.json';
+import Application from './components/Application.js';
 
 class AppmarketSearch extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
 			query: '',
-			currApps: document.querySelector('.appmarket')
+			currApps: document.querySelector('.appmarket'),
+			appmarket: apps
 		}
 		this.onChange = this.onChange.bind(this);
 	}
 
 	isContains(obj, key, val) {
-		let pattern = new RegExp(this.escapeRegExp(val), "i");
+		let pattern = new RegExp(val, "i");
 		if (key && obj.hasOwnProperty(key)) {
 			return pattern.test(obj[key]);
 		}
@@ -36,25 +38,28 @@ class AppmarketSearch extends React.Component {
 	}
 
 	onChange(e) {
-		this.setState({query: e.target.value});
+		this.setState({
+			query: this.escapeRegExp(e.target.value),
+			appmarket: this.filterApps(this.escapeRegExp(e.target.value))
+		});
 		if (e.target.value !== '') {
 			document.querySelector('.appmarket').style.display = 'none';
 		} else {
 			document.querySelector('.appmarket').style.display = 'block';
 		}
-		console.log( this.filterApps(this.state.query));
 	}
 
 	componentWillMount(){
-		console.log(apps);
-		4h
 	}
 
 	render () {
+		console.log(this.state.appmarket)
 		return (
-			<div>
-				<p> Hello React!</p>
+			<div className="appmarket">
 				<input placeholder="search" value={this.state.query} onChange={this.onChange} />
+				<div className="apps-grid">
+					{this.state.appmarket.map( (app, i) => <Application key={i} searchQuery={this.state.query} {...app} /> )}
+				</div>
 			</div>
 		);
 	}
