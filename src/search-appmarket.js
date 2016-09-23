@@ -2,7 +2,6 @@ import React from 'react';
 import {render} from 'react-dom';
 import apps from './data.json';
 import Application from './components/Application.js';
-import SearchField from './components/search-field.js';
 
 class AppmarketSearch extends React.Component {
 	constructor(props) {
