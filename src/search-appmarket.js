@@ -2,14 +2,17 @@ import React from 'react';
 import {render} from 'react-dom';
 import apps from './data.json';
 import Application from './components/Application.js';
+import SearchField from './components/search-field.js';
 
 class AppmarketSearch extends React.Component {
 	constructor(props) {
 		super(props);
+		this.sfc = document.querySelector(props.fieldContainer);
+		this.src = document.querySelector(props.resultContainer);
 		this.state = {
 			query: '',
 			currApps: document.querySelector('.appmarket'),
-			appmarket: apps
+			appmarket: apps,
 		}
 		this.onChange = this.onChange.bind(this);
 	}
@@ -43,26 +46,58 @@ class AppmarketSearch extends React.Component {
 			appmarket: this.filterApps(this.escapeRegExp(e.target.value))
 		});
 		if (e.target.value !== '') {
-			document.querySelector('.appmarket').style.display = 'none';
+			this.hideAppsBlocks();
 		} else {
-			document.querySelector('.appmarket').style.display = 'block';
+			this.showAppsBlocks();
 		}
 	}
 
 	componentWillMount(){
+		this.renderChildren();
 	}
 
-	render () {
-		console.log(this.state.appmarket)
+	componentDidUpdate() {
+		this.renderChildren();
+	}
+
+	hideAppsBlocks(){
+		[].slice.call(document.querySelectorAll('.appmarket__main .apps-block')).forEach( i => i.classList.add('apps-block--hidden')  )
+	}
+
+	showAppsBlocks(){
+		[].slice.call(document.querySelectorAll('.appmarket__main .apps-block.apps-block--hidden')).forEach( i => i.classList.remove('apps-block--hidden')  )
+	}
+
+	renderApps() {
+		if (!this.state.query) {
+			return '';
+		}
 		return (
-			<div className="appmarket">
-				<input placeholder="search" value={this.state.query} onChange={this.onChange} />
-				<div className="apps-grid">
-					{this.state.appmarket.map( (app, i) => <Application key={i} searchQuery={this.state.query} {...app} /> )}
-				</div>
+			<div className="apps-grid">
+				{this.state.appmarket.map( (app, i) => <Application key={i} searchQuery={this.state.query} {...app} /> )}
 			</div>
 		);
 	}
+
+	renderChildren() {
+		render(<input placeholder="search" value={this.state.query} onChange={this.onChange} />, this.sfc);
+		render(<div>{this.renderApps()}</div>, this.src);
+	}
+
+	render () {
+		return null;
+	}
 }
 
-render(<AppmarketSearch/>, document.getElementById('appmarket-search'));
+const inputContainer = document.createElement('div');
+inputContainer.setAttribute('id', 'appmarket-search-field');
+document.querySelector('.appmarket__navigation').appendChild(inputContainer);
+
+const resultContainer = document.createElement('div');
+resultContainer.setAttribute('id', 'appmarket-search-result');
+document.querySelector('.appmarket__main').insertBefore(resultContainer, document.querySelector('.appmarket .apps-block'));
+
+const amsContainer = document.createElement('div');
+amsContainer.setAttribute('id', 'appmarket-search');
+document.querySelector('.appmarket').append(amsContainer);
+render(<AppmarketSearch fieldContainer="#appmarket-search-field" resultContainer="#appmarket-search-result"  />, amsContainer);
